@@ -64,8 +64,8 @@ def crawl():
     print("無法更新,新番的最新資訊")
 
 
-schedule.every().day.at("8:00").do(crawl) #每天8點執行一次
-
+#schedule.every().day.at("8:00").do(crawl) #每天8點執行一次
+schedule.every(5).seconds.do(crawl) #每天8點執行一次
 
 while True:
   try:
