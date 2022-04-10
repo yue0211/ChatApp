@@ -108,7 +108,7 @@ schedule.every(5).seconds.do(crawl) #每5秒執行一次
 day=[]
 InsertUrl()
 
-
+print("程式開始")
 while True:
   try:
     schedule.run_pending()
@@ -116,4 +116,4 @@ while True:
   except:
     print("終止程式")
     break
-
+print("程式結束")
