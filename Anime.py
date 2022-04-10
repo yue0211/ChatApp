@@ -68,12 +68,15 @@ def crawl():
 #schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
 schedule.every(5).seconds.do(crawl) #每5秒執行一次
 
+print("程式開始執行")
 while True:
   try:
     schedule.run_pending()
-    print("程式開始執行")
     time.sleep(1)
   except:
     print("終止程式")
     break
+print("程式結束")
+
+
 
