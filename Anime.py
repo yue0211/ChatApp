@@ -100,10 +100,8 @@ def crawl():
     print("無法更新,新番的最新資訊")
 
 
-#schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
-schedule.every(5).seconds.do(crawl) #每5秒執行一次
-#schedule.every(10).seconds.do(CheckUrl)
-
+schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
+#schedule.every(5).seconds.do(crawl) #每5秒執行一次
 
 day=[]
 InsertUrl()
