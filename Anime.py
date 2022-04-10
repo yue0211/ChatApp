@@ -21,13 +21,22 @@ def crawl():
   AnimeName = [] #儲存爬到的所有新番的名字
   AnimeTime = [] #儲存爬到的所有新番的時間
 
+  totalAnime=[]
+
   for Anime in AnimeAll:
     Name = Anime.find(class_="anime_info anime_names site-content-float").find(class_="entity_localized_name").text
     Time = Anime.find(class_="anime_info site-content-float").find(class_="anime_onair time_today").text
     index = Time.find("：")
     Time = Time[(index+1):].split("／")
-    AnimeName.append(Name)
-    AnimeTime.append(Time)
+    dictAnime = {}
+    dictAnime["name"] = Name
+    if len(Time)==1: # 時間未定
+      dictAnime["first"] = Time[0]
+      dictAnime["update"] = Time[0]
+    else:
+      dictAnime["first"] = Time[0][:-1]
+      dictAnime["update"] = Time[1][:3]
+    totalAnime.append(dictAnime)
 
   jsonUrl = "https://api.jsonstorage.net/v1/json/ed324453-ff9a-490e-b380-6b3f0bb931ae/bc878350-0808-4916-b60c-dce3f6eee694" # 新番資訊儲存的開源json
 
@@ -46,15 +55,7 @@ def crawl():
 
   data = jsonResponse.json() #解析json檔案,讓data變成disctionary
 
-  count = 0 # 為了讓json檔的每個key值不相同
-
-  for Title,Time in zip(AnimeName,AnimeTime):
-    tempTitle = "Anime "+ str(count)
-    tempTime = "Time "+ str(count)
-    data[tempTitle] = Title
-    data[tempTime] = Time
-    count = int(count)
-    count+=1
+  data["contacts"]=totalAnime
     
   updatejson = requests.put(url=jsonUrl+"?apiKey=525992cb-0741-450f-92d3-37b9a9b1cc85",headers=jsonHeaders,json=json.dumps(data,ensure_ascii=False))
 
@@ -64,12 +65,13 @@ def crawl():
     print("無法更新,新番的最新資訊")
 
 
-schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
-#schedule.every(5).seconds.do(crawl) #每5秒執行一次
+#schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
+schedule.every(5).seconds.do(crawl) #每5秒執行一次
 
 while True:
   try:
     schedule.run_pending()
+    print("程式開始執行")
     time.sleep(1)
   except:
     print("終止程式")
