@@ -1,12 +1,43 @@
-import schedule
-import time  
-import requests,bs4,json
+import requests,bs4,json,pytz,datetime,time,schedule
 
+
+
+def InsertUrl():
+  global day
+  Url = "https://acgsecrets.hk/bangumi/"
+
+  for year in range(2022,2030):
+    for month in range(1,11,3):
+      if month!=10:
+        temp = Url+str(year)+"0"+str(month)+"/"
+      else:
+        temp = Url+str(year)+str(month)+"/"
+      day.append(temp)
+
+
+def validUrl():
+  global day
+  now = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y%m")  # 抓取當前時間,並設定時區
+  
+  if(now[-2:]=="02" or now[-2:]=="03"):  # 這些月份沒有新番資訊,因此要特別處理
+    Time = now[:-2]+"01"
+  elif(now[-2:]=="05" or now[-2:]=="06"):
+    Time = now[:-2]+"04"
+  elif(now[-2:]=="08" or now[-2:]=="09"):
+    Time = now[:-2]+"07"
+  elif(now[-2:]=="11" or now[-2:]=="12"):
+    Time = now[:-2]+"10"
+
+  for search in day:
+    index = search.find("bangumi")
+    if(Time == search[30:36]): # 挑出年月相同的Url作爬蟲
+      print("準備爬取"+search[30:36]+"的新番資訊")
+      return search
 
 
 def crawl():
 
-  AnimeUrl = "https://acgsecrets.hk/bangumi/202204/"
+  AnimeUrl = validUrl()
 
   AnimeHeaders = {"Content-Type":"text/html","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36"}
 
@@ -17,6 +48,10 @@ def crawl():
   root = bs4.BeautifulSoup(AnimeResponse.text,"html.parser")
 
   AnimeAll = root.findAll(class_="card-like acgs-anime")
+
+  if len(AnimeAll)==0:
+    print("尚未更新此月份的新番資訊")
+    return
 
   AnimeName = [] #儲存爬到的所有新番的名字
   AnimeTime = [] #儲存爬到的所有新番的時間
@@ -65,10 +100,15 @@ def crawl():
     print("無法更新,新番的最新資訊")
 
 
-schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
-#schedule.every(5).seconds.do(crawl) #每5秒執行一次
+#schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
+schedule.every(5).seconds.do(crawl) #每5秒執行一次
+#schedule.every(10).seconds.do(CheckUrl)
 
-print("程式開始執行")
+
+day=[]
+InsertUrl()
+
+
 while True:
   try:
     schedule.run_pending()
@@ -76,7 +116,4 @@ while True:
   except:
     print("終止程式")
     break
-print("程式結束")
-
-
 
