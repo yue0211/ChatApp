@@ -136,8 +136,8 @@ def setSeason():
 
 
 
-#schedule.every().day.at("09:00").do(setSeason) #每天9點執行一次
-schedule.every(5).seconds.do(setSeason) #每5秒執行一次
+schedule.every().day.at("09:00").do(setSeason) #每天9點執行一次
+#schedule.every(5).seconds.do(setSeason) #每5秒執行一次
 
 day=[]
 InsertUrl()
