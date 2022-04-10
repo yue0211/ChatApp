@@ -20,17 +20,17 @@ def validUrl():
   now = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y%m")  # 抓取當前時間,並設定時區
   
   if(now[-2:]=="02" or now[-2:]=="03"):  # 這些月份沒有新番資訊,因此要特別處理
-    Time = now[:-2]+"01"
+    now = now[:-2]+"01"
   elif(now[-2:]=="05" or now[-2:]=="06"):
-    Time = now[:-2]+"04"
+    now = now[:-2]+"04"
   elif(now[-2:]=="08" or now[-2:]=="09"):
-    Time = now[:-2]+"07"
+    now = now[:-2]+"07"
   elif(now[-2:]=="11" or now[-2:]=="12"):
-    Time = now[:-2]+"10"
+    now = now[:-2]+"10"
 
   for search in day:
     index = search.find("bangumi")
-    if(Time == search[30:36]): # 挑出年月相同的Url作爬蟲
+    if(now == search[30:36]): # 挑出年月相同的Url作爬蟲
       print("準備爬取"+search[30:36]+"的新番資訊")
       return search
 
