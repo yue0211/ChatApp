@@ -68,7 +68,10 @@ def crawl():
     if len(Time)==1: # 時間未定
       dictAnime["first"] = Time[0]
       dictAnime["update"] = Time[0]
-    else:
+    elif len(Time)==2: # 時間資訊包含兩個的狀況
+      dictAnime["first"] = "跨季撥放"
+      dictAnime["update"] = Time[0][:3]
+    else: #時間資訊包含三個的狀況
       dictAnime["first"] = Time[0][:-1]
       dictAnime["update"] = Time[1][:3]
     totalAnime.append(dictAnime)
@@ -100,8 +103,8 @@ def crawl():
     print("無法更新,新番的最新資訊")
 
 
-schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
-#schedule.every(5).seconds.do(crawl) #每5秒執行一次
+#schedule.every().day.at("09:00").do(crawl) #每天9點執行一次
+schedule.every(5).seconds.do(crawl) #每5秒執行一次
 
 day=[]
 InsertUrl()
